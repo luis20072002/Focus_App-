@@ -24,15 +24,24 @@ void main() {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final authProvider = context.watch<AuthProvider>();
+  State<MyApp> createState() => _MyAppState();
+}
 
-    final router = GoRouter(
+class _MyAppState extends State<MyApp> {
+  late final GoRouter _router;
+
+  @override
+  void initState() {
+    super.initState();
+    final authProvider = context.read<AuthProvider>();
+
+    _router = GoRouter(
       initialLocation: '/',
+      refreshListenable: authProvider,
       redirect: (context, state) {
         final status = authProvider.status;
         if (status == AuthStatus.checking) return null;
@@ -41,13 +50,14 @@ class MyApp extends StatelessWidget {
             state.matchedLocation == '/register';
         if (!isAuth && !isAuthRoute) return '/login';
         if (isAuth && isAuthRoute) return '/home';
+        if (isAuth && state.matchedLocation == '/') return '/home';
         return null;
       },
       routes: [
-        GoRoute(path: '/',        builder: (_, __) => const SplashScreen()),
-        GoRoute(path: '/login',   builder: (_, __) => const LoginScreen()),
-        GoRoute(path: '/register',builder: (_, __) => const RegisterScreen()),
-        GoRoute(path: '/home',    builder: (_, __) => const HomeScreen()),
+        GoRoute(path: '/',         builder: (_, __) => const SplashScreen()),
+        GoRoute(path: '/login',    builder: (_, __) => const LoginScreen()),
+        GoRoute(path: '/register', builder: (_, __) => const RegisterScreen()),
+        GoRoute(path: '/home',     builder: (_, __) => const HomeScreen()),
         GoRoute(path: '/create-task', builder: (_, __) => const CreateTaskScreen()),
         GoRoute(
           path: '/task/:id',
@@ -58,11 +68,14 @@ class MyApp extends StatelessWidget {
         GoRoute(path: '/profile', builder: (_, __) => const ProfileScreen()),
       ],
     );
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return MaterialApp.router(
       title: 'Focus App',
       debugShowCheckedModeBanner: false,
-      routerConfig: router,
+      routerConfig: _router,
       theme: ThemeData(
         useMaterial3: true,
         scaffoldBackgroundColor: AppColors.fondo,
