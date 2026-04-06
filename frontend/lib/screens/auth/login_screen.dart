@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/constants/app_colors.dart';
 import '../../providers/auth_provider.dart';
 
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -34,6 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
       _identifierCtrl.text.trim(),
       _passwordCtrl.text,
     );
+
 
     if (!mounted) return;
     setState(() => _loading = false);
