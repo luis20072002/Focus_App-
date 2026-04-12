@@ -19,8 +19,8 @@ class _LoginScreenState extends State<LoginScreen>
   final _identifierCtrl = TextEditingController();
   final _passwordCtrl   = TextEditingController();
 
-  bool _obscurePassword = true;
-  bool _loading         = false;
+  bool _obscurePassword   = true;
+  bool _loading           = false;
   bool _identifierFocused = false;
   bool _passwordFocused   = false;
 
@@ -36,7 +36,7 @@ class _LoginScreenState extends State<LoginScreen>
 
     _eyeController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 250),
     );
     _eyeAnimation = CurvedAnimation(
       parent: _eyeController,
@@ -63,11 +63,7 @@ class _LoginScreenState extends State<LoginScreen>
 
   void _toggleObscure() {
     setState(() => _obscurePassword = !_obscurePassword);
-    if (_obscurePassword) {
-      _eyeController.reverse();
-    } else {
-      _eyeController.forward();
-    }
+    _obscurePassword ? _eyeController.reverse() : _eyeController.forward();
   }
 
   Future<void> _submit() async {
@@ -89,7 +85,7 @@ class _LoginScreenState extends State<LoginScreen>
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            auth.error ?? 'Error al iniciar sesion',
+            auth.error ?? 'Error al iniciar sesión',
             style: GoogleFonts.nunito(color: Colors.white),
           ),
           backgroundColor: AppColors.error,
@@ -108,14 +104,18 @@ class _LoginScreenState extends State<LoginScreen>
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SingleChildScrollView(
+        physics: const ClampingScrollPhysics(),
         child: Column(
           children: [
-            // ── Header decorativo ──────────────────────────────────────
-            _Header(height: size.height * 0.32),
+            // ── Header ──────────────────────────────────────────────
+            _Header(
+              height: size.height * 0.30,
+              onBack: () => context.go('/welcome'),
+            ),
 
-            // ── Formulario ────────────────────────────────────────────
+            // ── Formulario ──────────────────────────────────────────
             Padding(
-              padding: const EdgeInsets.fromLTRB(28, 32, 28, 24),
+              padding: const EdgeInsets.fromLTRB(28, 28, 28, 24),
               child: Form(
                 key: _formKey,
                 child: Column(
@@ -125,35 +125,35 @@ class _LoginScreenState extends State<LoginScreen>
                     Text(
                       'Bienvenido',
                       style: GoogleFonts.nunito(
-                        fontSize: 32,
+                        fontSize: 30,
                         fontWeight: FontWeight.w800,
                         color: AppColors.midnight,
                         letterSpacing: -0.5,
                       ),
-                    )
-                    .animate()
-                    .fadeIn(duration: 400.ms)
-                    .slideY(begin: 0.2, end: 0, duration: 400.ms),
+                    ).animate().fadeIn(duration: 350.ms).slideY(
+                          begin: 0.15,
+                          end: 0,
+                          duration: 350.ms,
+                          curve: Curves.easeOut,
+                        ),
 
                     const SizedBox(height: 4),
 
                     Text(
                       'Inicia sesión para continuar',
                       style: GoogleFonts.nunito(
-                        fontSize: 15,
+                        fontSize: 14,
                         color: AppColors.grisTexto,
                         fontWeight: FontWeight.w500,
                       ),
-                    )
-                    .animate()
-                    .fadeIn(delay: 100.ms, duration: 400.ms),
+                    ).animate().fadeIn(delay: 80.ms, duration: 350.ms),
 
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 28),
 
                     // Campo identificador
                     _FieldLabel(text: 'Correo, teléfono o usuario')
-                    .animate()
-                    .fadeIn(delay: 150.ms, duration: 400.ms),
+                        .animate()
+                        .fadeIn(delay: 120.ms, duration: 300.ms),
 
                     const SizedBox(height: 8),
 
@@ -164,23 +164,17 @@ class _LoginScreenState extends State<LoginScreen>
                       hintText: 'tucorreo@gmail.com',
                       prefixIcon: Icons.person_outline_rounded,
                       keyboardType: TextInputType.emailAddress,
-                      validator: (v) {
-                        if (v == null || v.trim().isEmpty) {
-                          return 'Este campo es obligatorio';
-                        }
-                        return null;
-                      },
-                    )
-                    .animate()
-                    .fadeIn(delay: 200.ms, duration: 400.ms)
-                    .slideX(begin: -0.05, end: 0, duration: 400.ms),
+                      validator: (v) => v == null || v.trim().isEmpty
+                          ? 'Este campo es obligatorio'
+                          : null,
+                    ).animate().fadeIn(delay: 160.ms, duration: 300.ms),
 
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 18),
 
                     // Campo contraseña
                     _FieldLabel(text: 'Contraseña')
-                    .animate()
-                    .fadeIn(delay: 250.ms, duration: 400.ms),
+                        .animate()
+                        .fadeIn(delay: 200.ms, duration: 300.ms),
 
                     const SizedBox(height: 8),
 
@@ -198,15 +192,11 @@ class _LoginScreenState extends State<LoginScreen>
                       },
                       suffix: _EyeButton(
                         animation: _eyeAnimation,
-                        obscure: _obscurePassword,
                         onTap: _toggleObscure,
                       ),
-                    )
-                    .animate()
-                    .fadeIn(delay: 300.ms, duration: 400.ms)
-                    .slideX(begin: -0.05, end: 0, duration: 400.ms),
+                    ).animate().fadeIn(delay: 240.ms, duration: 300.ms),
 
-                    // Olvidaste tu contraseña
+                    // Olvidaste contraseña
                     Align(
                       alignment: Alignment.centerRight,
                       child: TextButton(
@@ -224,11 +214,9 @@ class _LoginScreenState extends State<LoginScreen>
                           ),
                         ),
                       ),
-                    )
-                    .animate()
-                    .fadeIn(delay: 350.ms, duration: 400.ms),
+                    ).animate().fadeIn(delay: 280.ms, duration: 300.ms),
 
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 4),
 
                     // Botón login
                     _loading
@@ -259,12 +247,9 @@ class _LoginScreenState extends State<LoginScreen>
                                 ),
                               ),
                             ),
-                          )
-                        .animate()
-                        .fadeIn(delay: 400.ms, duration: 400.ms)
-                        .slideY(begin: 0.1, end: 0, duration: 400.ms),
+                          ).animate().fadeIn(delay: 320.ms, duration: 300.ms),
 
-                    const SizedBox(height: 28),
+                    const SizedBox(height: 24),
 
                     // Ir a registro
                     Center(
@@ -290,9 +275,7 @@ class _LoginScreenState extends State<LoginScreen>
                           ),
                         ),
                       ),
-                    )
-                    .animate()
-                    .fadeIn(delay: 450.ms, duration: 400.ms),
+                    ).animate().fadeIn(delay: 360.ms, duration: 300.ms),
 
                     const SizedBox(height: 32),
                   ],
@@ -306,11 +289,12 @@ class _LoginScreenState extends State<LoginScreen>
   }
 }
 
-// ── Header decorativo ──────────────────────────────────────────────────────
+// ── Header ─────────────────────────────────────────────────────────────────
 
 class _Header extends StatelessWidget {
   final double height;
-  const _Header({required this.height});
+  final VoidCallback onBack;
+  const _Header({required this.height, required this.onBack});
 
   @override
   Widget build(BuildContext context) {
@@ -319,7 +303,6 @@ class _Header extends StatelessWidget {
       width: double.infinity,
       child: Stack(
         children: [
-          // Fondo con forma de ola
           ClipPath(
             clipper: _WaveClipper(),
             child: Container(
@@ -339,8 +322,8 @@ class _Header extends StatelessWidget {
             top: -20,
             right: -30,
             child: Container(
-              width: 140,
-              height: 140,
+              width: 130,
+              height: 130,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.white.withOpacity(0.06),
@@ -348,42 +331,53 @@ class _Header extends StatelessWidget {
             ),
           ),
           Positioned(
-            top: 30,
-            right: 60,
+            top: 28,
+            right: 55,
             child: Container(
-              width: 70,
-              height: 70,
+              width: 60,
+              height: 60,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppColors.gum.withOpacity(0.25),
+                color: AppColors.gum.withOpacity(0.22),
               ),
             ),
           ),
           Positioned(
-            bottom: 40,
-            left: -20,
+            bottom: 36,
+            left: -18,
             child: Container(
-              width: 100,
-              height: 100,
+              width: 90,
+              height: 90,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppColors.lightBlue.withOpacity(0.15),
+                color: AppColors.lightBlue.withOpacity(0.12),
               ),
             ),
           ),
 
-          // Icono central
+          // Botón de regreso
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 8,
+            left: 8,
+            child: IconButton(
+              onPressed: onBack,
+              icon: const Icon(Icons.arrow_back_ios_new_rounded,
+                  color: Colors.white, size: 20),
+            ),
+          ),
+
+          // Logo y nombre
           Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(height: 24),
+                const SizedBox(height: 16),
                 Container(
-                  width: 72,
-                  height: 72,
+                  width: 64,
+                  height: 64,
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(18),
                     border: Border.all(
                       color: Colors.white.withOpacity(0.3),
                       width: 1.5,
@@ -392,31 +386,23 @@ class _Header extends StatelessWidget {
                   child: const Icon(
                     Icons.bolt_rounded,
                     color: Colors.white,
-                    size: 40,
+                    size: 36,
                   ),
-                )
-                .animate()
-                .scale(
-                  begin: const Offset(0.5, 0.5),
-                  end: const Offset(1, 1),
-                  duration: 600.ms,
-                  curve: Curves.elasticOut,
-                ),
-
-                const SizedBox(height: 12),
-
+                ).animate().scale(
+                      begin: const Offset(0.6, 0.6),
+                      end: const Offset(1, 1),
+                      duration: 500.ms,
+                      curve: Curves.elasticOut,
+                    ),
+                const SizedBox(height: 10),
                 Text(
                   'Focus App',
                   style: GoogleFonts.nunito(
                     color: Colors.white,
-                    fontSize: 22,
+                    fontSize: 20,
                     fontWeight: FontWeight.w800,
-                    letterSpacing: 0.5,
                   ),
-                )
-                .animate()
-                .fadeIn(delay: 200.ms, duration: 500.ms)
-                .slideY(begin: 0.3, end: 0, duration: 500.ms),
+                ).animate().fadeIn(delay: 150.ms, duration: 400.ms),
               ],
             ),
           ),
@@ -435,11 +421,11 @@ class _WaveClipper extends CustomClipper<Path> {
     path.lineTo(0, size.height - 40);
     path.quadraticBezierTo(
       size.width * 0.25, size.height,
-      size.width * 0.5,  size.height - 20,
+      size.width * 0.5, size.height - 20,
     );
     path.quadraticBezierTo(
       size.width * 0.75, size.height - 40,
-      size.width,        size.height - 10,
+      size.width, size.height - 10,
     );
     path.lineTo(size.width, 0);
     path.close();
@@ -478,31 +464,23 @@ class _AnimatedField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
+      duration: const Duration(milliseconds: 180),
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isFocused
-              ? AppColors.blueberry
-              : Colors.transparent,
+          color: isFocused ? AppColors.blueberry : Colors.transparent,
           width: 1.5,
         ),
-        boxShadow: isFocused
-            ? [
-                BoxShadow(
-                  color: AppColors.blueberry.withOpacity(0.15),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
-                ),
-              ]
-            : [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
+        boxShadow: [
+          BoxShadow(
+            color: isFocused
+                ? AppColors.blueberry.withOpacity(0.12)
+                : Colors.black.withOpacity(0.04),
+            blurRadius: isFocused ? 10 : 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: TextFormField(
         controller: controller,
@@ -517,16 +495,13 @@ class _AnimatedField extends StatelessWidget {
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: GoogleFonts.nunito(
-            color: AppColors.grisTexto.withOpacity(0.6),
+            color: AppColors.grisTexto.withOpacity(0.5),
             fontSize: 15,
           ),
-          prefixIcon: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            child: Icon(
-              prefixIcon,
-              color: isFocused ? AppColors.blueberry : AppColors.grisTexto,
-              size: 20,
-            ),
+          prefixIcon: Icon(
+            prefixIcon,
+            color: isFocused ? AppColors.blueberry : AppColors.grisTexto,
+            size: 20,
           ),
           suffixIcon: suffix,
           filled: false,
@@ -550,7 +525,7 @@ class _AnimatedField extends StatelessWidget {
   }
 }
 
-// ── Label de campo ─────────────────────────────────────────────────────────
+// ── Label ──────────────────────────────────────────────────────────────────
 
 class _FieldLabel extends StatelessWidget {
   final String text;
@@ -564,24 +539,18 @@ class _FieldLabel extends StatelessWidget {
         color: AppColors.midnight,
         fontSize: 13,
         fontWeight: FontWeight.w700,
-        letterSpacing: 0.2,
       ),
     );
   }
 }
 
-// ── Botón del ojito ────────────────────────────────────────────────────────
+// ── Ojito ──────────────────────────────────────────────────────────────────
 
 class _EyeButton extends StatelessWidget {
   final Animation<double> animation;
-  final bool obscure;
   final VoidCallback onTap;
 
-  const _EyeButton({
-    required this.animation,
-    required this.obscure,
-    required this.onTap,
-  });
+  const _EyeButton({required this.animation, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -591,37 +560,33 @@ class _EyeButton extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         child: AnimatedBuilder(
           animation: animation,
-          builder: (context, child) {
-            return Stack(
-              alignment: Alignment.center,
-              children: [
-                // Ojo abierto — aparece cuando se muestra la contraseña
-                Opacity(
-                  opacity: animation.value,
-                  child: Transform.scale(
-                    scale: 0.8 + (animation.value * 0.2),
-                    child: const Icon(
-                      Icons.visibility_outlined,
-                      color: AppColors.blueberry,
-                      size: 22,
-                    ),
+          builder: (_, __) => Stack(
+            alignment: Alignment.center,
+            children: [
+              Opacity(
+                opacity: animation.value,
+                child: Transform.scale(
+                  scale: 0.85 + (animation.value * 0.15),
+                  child: const Icon(
+                    Icons.visibility_outlined,
+                    color: AppColors.blueberry,
+                    size: 21,
                   ),
                 ),
-                // Ojo cerrado — aparece cuando está oculta
-                Opacity(
-                  opacity: 1 - animation.value,
-                  child: Transform.scale(
-                    scale: 0.8 + ((1 - animation.value) * 0.2),
-                    child: Icon(
-                      Icons.visibility_off_outlined,
-                      color: AppColors.grisTexto.withOpacity(0.6),
-                      size: 22,
-                    ),
+              ),
+              Opacity(
+                opacity: 1 - animation.value,
+                child: Transform.scale(
+                  scale: 0.85 + ((1 - animation.value) * 0.15),
+                  child: Icon(
+                    Icons.visibility_off_outlined,
+                    color: AppColors.grisTexto.withOpacity(0.5),
+                    size: 21,
                   ),
                 ),
-              ],
-            );
-          },
+              ),
+            ],
+          ),
         ),
       ),
     );
