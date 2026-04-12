@@ -83,7 +83,7 @@ class TaskService {
 
   static Future<Task> updateTaskStatus(int taskId, String newStatus) async {
     final response = await http.put(
-      Uri.parse('${ApiConstants.tasks}/$taskId'),
+      Uri.parse('${ApiConstants.baseUrl}/tasks/$taskId'),
       headers: await _headers(),
       body: jsonEncode({'status': newStatus}),
     );
@@ -98,7 +98,7 @@ class TaskService {
 
   static Future<void> deleteTask(int taskId) async {
     final response = await http.delete(
-      Uri.parse('${ApiConstants.tasks}/$taskId'),
+      Uri.parse('${ApiConstants.baseUrl}/tasks/$taskId'),
       headers: await _headers(),
     );
 

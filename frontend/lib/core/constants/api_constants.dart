@@ -1,6 +1,8 @@
 class ApiConstants {
   // Cambia a tu IP local si usas dispositivo fisico: 'http://192.168.x.x:8000'
   static const String baseUrl = 'http://127.0.0.1:8000';
+  //static const String baseUrl = 'http://10.0.2.2:8000';
+  //static const String baseUrl = 'http://192.168.1.28:8000';
 
   // Auth
   static const String login    = '$baseUrl/auth/login';
@@ -9,7 +11,7 @@ class ApiConstants {
   static const String logout   = '$baseUrl/auth/logout';
 
   // Tareas
-  static const String tasks      = '$baseUrl/tasks';
+  static const String tasks      = '$baseUrl/tasks/';
   static const String tasksToday = '$baseUrl/tasks/today';
 
   // Plantillas
