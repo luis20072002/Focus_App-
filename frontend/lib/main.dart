@@ -71,7 +71,7 @@ class _MyAppState extends State<MyApp> {
             taskId: int.parse(state.pathParameters['id']!),
           ),
         ),
-        GoRoute(path: '/profile', builder: (_, __) => const ProfileScreen()),
+        GoRoute(path: '/profile', builder: (_, _) => const ProfileScreen()),
       ],
     );
   }

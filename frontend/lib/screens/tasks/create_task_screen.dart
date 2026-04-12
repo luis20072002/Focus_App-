@@ -204,7 +204,7 @@ final recurrenceDays = _selectedDays.isNotEmpty
               // Notificaciones
               _label('Tipo de notificacion'),
               DropdownButtonFormField<String>(
-                value: _notifType,
+                initialValue: _notifType,
                 dropdownColor: AppColors.tarjeta,
                 style: const TextStyle(color: AppColors.blanco),
                 decoration: const InputDecoration(),
@@ -225,7 +225,7 @@ final recurrenceDays = _selectedDays.isNotEmpty
                   title: const Text('Tarea urgente', style: TextStyle(color: AppColors.blanco)),
                   subtitle: const Text('No puede obtener Foints ni ser recurrente', style: TextStyle(color: AppColors.grisTexto, fontSize: 12)),
                   value: _isUrgent,
-                  activeColor: AppColors.rojo,
+                  activeThumbColor: AppColors.rojo,
                   onChanged: (v) => setState(() {
                     _isUrgent = v;
                     if (v) _isRecurrent = false;
@@ -247,7 +247,7 @@ final recurrenceDays = _selectedDays.isNotEmpty
                     title: const Text('Tarea recurrente', style: TextStyle(color: AppColors.blanco)),
                     subtitle: const Text('Se repetira segun la frecuencia elegida', style: TextStyle(color: AppColors.grisTexto, fontSize: 12)),
                     value: _isRecurrent,
-                    activeColor: AppColors.naranja,
+                    activeThumbColor: AppColors.naranja,
                     onChanged: (v) => setState(() {
                       _isRecurrent = v;
                       if (!v) {
