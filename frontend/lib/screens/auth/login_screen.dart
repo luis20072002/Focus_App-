@@ -560,7 +560,7 @@ class _EyeButton extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         child: AnimatedBuilder(
           animation: animation,
-          builder: (_, __) => Stack(
+          builder: (_, _) => Stack(
             alignment: Alignment.center,
             children: [
               Opacity(

@@ -45,7 +45,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen>
 
   // Cantidad máxima de tareas con Foints por día (regla de negocio)
   static const int _maxFointsPerDay = 3;
-  int _currentFointsToday = 1; // mock — en prod viene del provider
+  final int _currentFointsToday = 1; // mock — en prod viene del provider
 
   late AnimationController _animController;
   late Animation<double> _fadeAnim;
@@ -798,7 +798,7 @@ class _OptionsSection extends StatelessWidget {
                 Switch(
                   value: wantFoints && canAddFoints,
                   onChanged: canAddFoints && !isUrgent ? onFointsChanged : null,
-                  activeColor: AppColors.blueberry,
+                  activeThumbColor: AppColors.blueberry,
                 ),
               ],
             ),
@@ -884,7 +884,7 @@ class _OptionTile extends StatelessWidget {
           style: const TextStyle(color: AppColors.grisTexto, fontSize: 11),
         ),
         value: value,
-        activeColor: activeColor,
+        activeThumbColor: activeColor,
         onChanged: onChanged,
       ),
     );

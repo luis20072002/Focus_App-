@@ -56,15 +56,15 @@ class _MyAppState extends State<MyApp> {
         return null;
       },
       routes: [
-        GoRoute(path: '/',         builder: (_, __) => const SplashScreen()),
-        GoRoute(path: '/welcome', builder: (_, __) => const WelcomeScreen()),
-        GoRoute(path: '/forgot-password', builder: (_, __) => const Scaffold(
+        GoRoute(path: '/',         builder: (_, _) => const SplashScreen()),
+        GoRoute(path: '/welcome', builder: (_, _) => const WelcomeScreen()),
+        GoRoute(path: '/forgot-password', builder: (_, _) => const Scaffold(
           body: Center(child: Text('Próximamente')),
           )),
-        GoRoute(path: '/login',    builder: (_, __) => const LoginScreen()),
-        GoRoute(path: '/register', builder: (_, __) => const RegisterScreen()),
-        GoRoute(path: '/home',     builder: (_, __) => const HomeScreen()),
-        GoRoute(path: '/create-task', builder: (_, __) => const CreateTaskScreen()),
+        GoRoute(path: '/login',    builder: (_, _) => const LoginScreen()),
+        GoRoute(path: '/register', builder: (_, _) => const RegisterScreen()),
+        GoRoute(path: '/home',     builder: (_, _) => const HomeScreen()),
+        GoRoute(path: '/create-task', builder: (_, _) => const CreateTaskScreen()),
         GoRoute(
           path: '/task/:id',
           builder: (_, state) => TaskDetailScreen(

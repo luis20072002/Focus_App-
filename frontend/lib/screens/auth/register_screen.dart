@@ -105,8 +105,12 @@ class _RegisterScreenState extends State<RegisterScreen>
 
   @override
   void dispose() {
-    for (final c in [_nameCtrl, _lastnameCtrl, _usernameCtrl, _emailCtrl, _phoneCtrl, _passCtrl, _passConfCtrl]) c.dispose();
-    for (final f in [_nameFocus, _lastnameFocus, _usernameFocus, _emailFocus, _phoneFocus, _passFocus, _passConfFocus]) f.dispose();
+    for (final c in [_nameCtrl, _lastnameCtrl, _usernameCtrl, _emailCtrl, _phoneCtrl, _passCtrl, _passConfCtrl]) {
+      c.dispose();
+    }
+    for (final f in [_nameFocus, _lastnameFocus, _usernameFocus, _emailFocus, _phoneFocus, _passFocus, _passConfFocus]) {
+      f.dispose();
+    }
     _eyePass.dispose();
     _eyeConf.dispose();
     super.dispose();
@@ -114,8 +118,9 @@ class _RegisterScreenState extends State<RegisterScreen>
 
   void _nextStep() {
     bool valid = false;
-    if (_currentStep == 0) valid = _step1Key.currentState?.validate() ?? false;
-    else if (_currentStep == 1) valid = _step2Key.currentState?.validate() ?? false;
+    if (_currentStep == 0) {
+      valid = _step1Key.currentState?.validate() ?? false;
+    } else if (_currentStep == 1) valid = _step2Key.currentState?.validate() ?? false;
     else if (_currentStep == 2) valid = _step3Key.currentState?.validate() ?? false;
     else if (_currentStep == 3) valid = true;
 
@@ -216,7 +221,7 @@ class _RegisterScreenState extends State<RegisterScreen>
           _RegisterHeader(
             step: _currentStep,
             totalSteps: 4,
-            gradientColors: _gradients[_currentStep].map((c) => c as Color).toList(),
+            gradientColors: _gradients[_currentStep].map((c) => c).toList(),
             title: _titles[_currentStep],
             subtitle: _subtitles[_currentStep],
             onBack: _prevStep,
@@ -993,7 +998,7 @@ class _EyeButton extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         child: AnimatedBuilder(
           animation: animation,
-          builder: (_, __) => Stack(
+          builder: (_, _) => Stack(
             alignment: Alignment.center,
             children: [
               Opacity(
