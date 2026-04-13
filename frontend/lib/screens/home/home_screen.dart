@@ -120,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen>
             _buildHomeTab(user, taskProv),
 
             // ── Calendario ───────────────────────────────────────────────
-            const CalendarScreen(),
+            const CalendarBody(),
 
             // ── Perfil ───────────────────────────────────────────────────
             _ProfileTab(

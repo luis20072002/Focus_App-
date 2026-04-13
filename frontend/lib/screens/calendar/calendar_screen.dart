@@ -1,29 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
 
-// ════════════════════════════════════════════════════════════════════════════
-// UBICACIÓN: lib/screens/calendar/calendar_screen.dart
-// REEMPLAZA: el calendar_screen.dart original (si existe)
-//
-// IMPORTANTE SOBRE EL RENDERIZADO:
-//   Este archivo tiene DOS widgets exportables:
-//
-//   1. CalendarScreen  → Widget COMPLETO con Scaffold propio.
-//      Úsalo si navegas a /calendar directamente desde el router.
-//      NO lo uses dentro del IndexedStack de HomeScreen.
-//
-//   2. CalendarBody    → Widget SIN Scaffold, solo el contenido.
-//      Úsalo dentro de IndexedStack u otros contenedores.
-//      HomeScreen ya lo incluye como _EmbeddedCalendar interno;
-//      este export es por si otro widget lo necesita.
-//
-// POR QUÉ FALLABA ANTES:
-//   HomeScreen usaba IndexedStack + CalendarScreen(con Scaffold).
-//   Flutter anida Scaffold dentro de Scaffold → el SafeArea interior
-//   consume todo el espacio disponible y el body queda con height=0.
-//   Resultado: pantalla blanca sin errores en consola.
-// ════════════════════════════════════════════════════════════════════════════
-
 class CalendarScreen extends StatelessWidget {
   const CalendarScreen({super.key});
 
@@ -36,8 +13,6 @@ class CalendarScreen extends StatelessWidget {
   }
 }
 
-/// Widget de contenido del calendario sin Scaffold.
-/// Seguro para embeber en IndexedStack, PageView, etc.
 class CalendarBody extends StatefulWidget {
   const CalendarBody({super.key});
 
@@ -51,66 +26,23 @@ class _CalendarBodyState extends State<CalendarBody>
   DateTime? _selectedDay;
   late TabController _tabController;
 
-  // Datos mock — en prod vendrían del TaskProvider
   final Set<int> _completedDays = {2, 3, 5, 8, 9, 10};
   final Set<int> _failedDays = {4, 6, 11};
   final Set<int> _scheduledDays = {18, 20, 21, 22, 25, 27};
 
   final Map<int, List<Map<String, dynamic>>> _tasksByDay = {
     5: [
-      {
-        'name': 'Ir al gimnasio',
-        'time': '07:00',
-        'done': true,
-        'foints': true,
-        'color': 0xFF5A4EDB,
-      },
-      {
-        'name': 'Leer 30 minutos',
-        'time': '21:00',
-        'done': true,
-        'foints': false,
-        'color': 0xFFEA88B9,
-      },
+      {'name': 'Ir al gimnasio', 'time': '07:00', 'done': true, 'foints': true, 'color': 0xFF5A4EDB},
+      {'name': 'Leer 30 minutos', 'time': '21:00', 'done': true, 'foints': false, 'color': 0xFFEA88B9},
     ],
     8: [
-      {
-        'name': 'Meditación matutina',
-        'time': '06:30',
-        'done': true,
-        'foints': true,
-        'color': 0xFF5A4EDB,
-      },
-      {
-        'name': 'Estudiar inglés',
-        'time': '19:00',
-        'done': true,
-        'foints': true,
-        'color': 0xFFBCBBF2,
-      },
+      {'name': 'Meditación matutina', 'time': '06:30', 'done': true, 'foints': true, 'color': 0xFF5A4EDB},
+      {'name': 'Estudiar inglés', 'time': '19:00', 'done': true, 'foints': true, 'color': 0xFFBCBBF2},
     ],
     18: [
-      {
-        'name': 'Correr 5km',
-        'time': '07:00',
-        'done': false,
-        'foints': true,
-        'color': 0xFF5A4EDB,
-      },
-      {
-        'name': 'Llamar a mamá',
-        'time': '18:00',
-        'done': false,
-        'foints': false,
-        'color': 0xFFEA88B9,
-      },
-      {
-        'name': 'Beber 2L de agua',
-        'time': '12:00',
-        'done': false,
-        'foints': true,
-        'color': 0xFFBCBBF2,
-      },
+      {'name': 'Correr 5km', 'time': '07:00', 'done': false, 'foints': true, 'color': 0xFF5A4EDB},
+      {'name': 'Llamar a mamá', 'time': '18:00', 'done': false, 'foints': false, 'color': 0xFFEA88B9},
+      {'name': 'Beber 2L de agua', 'time': '12:00', 'done': false, 'foints': true, 'color': 0xFFBCBBF2},
     ],
   };
 
@@ -127,14 +59,9 @@ class _CalendarBodyState extends State<CalendarBody>
     super.dispose();
   }
 
-  // ── Helpers ──────────────────────────────────────────────────────────────
-
   List<DateTime> _daysInMonth(DateTime month) {
     final lastDay = DateTime(month.year, month.month + 1, 0);
-    return List.generate(
-      lastDay.day,
-      (i) => DateTime(month.year, month.month, i + 1),
-    );
+    return List.generate(lastDay.day, (i) => DateTime(month.year, month.month, i + 1));
   }
 
   int _firstWeekdayOfMonth(DateTime month) {
@@ -150,13 +77,11 @@ class _CalendarBodyState extends State<CalendarBody>
     return months[date.month - 1];
   }
 
-  // ── Build ─────────────────────────────────────────────────────────────────
-
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // ── Header ──────────────────────────────────────────────────────────
+        // ── Header ─────────────────────────────────────────────────────────
         Padding(
           padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
           child: Row(
@@ -171,54 +96,52 @@ class _CalendarBodyState extends State<CalendarBody>
                   letterSpacing: -0.5,
                 ),
               ),
-              // Tab switcher Mes / Agenda
-              Container(
-                decoration: BoxDecoration(
-                  color: AppColors.surface,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                      color: AppColors.lightBlue.withOpacity(0.3)),
-                ),
-                child: TabBar(
-                  controller: _tabController,
-                  indicator: BoxDecoration(
-                    color: AppColors.blueberry,
-                    borderRadius: BorderRadius.circular(10),
+              // FIX: SizedBox con ancho fijo para acotar el TabBar
+              SizedBox(
+                width: 160,
+                height: 38,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.lightBlue.withOpacity(0.3)),
                   ),
-                  indicatorSize: TabBarIndicatorSize.tab,
-                  dividerColor: Colors.transparent,
-                  labelColor: Colors.white,
-                  unselectedLabelColor: AppColors.grisTexto,
-                  labelStyle: const TextStyle(
-                      fontSize: 12, fontWeight: FontWeight.w700),
-                  tabs: const [
-                    Tab(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 12),
+                  child: TabBar(
+                    controller: _tabController,
+                    indicator: BoxDecoration(
+                      color: AppColors.blueberry,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    dividerColor: Colors.transparent,
+                    labelColor: Colors.white,
+                    unselectedLabelColor: AppColors.grisTexto,
+                    labelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+                    tabs: const [
+                      Tab(
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.calendar_view_month_rounded, size: 16),
+                            Icon(Icons.calendar_view_month_rounded, size: 14),
                             SizedBox(width: 4),
                             Text('Mes'),
                           ],
                         ),
                       ),
-                    ),
-                    Tab(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 12),
+                      Tab(
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.view_agenda_rounded, size: 16),
+                            Icon(Icons.view_agenda_rounded, size: 14),
                             SizedBox(width: 4),
                             Text('Agenda'),
                           ],
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -227,7 +150,7 @@ class _CalendarBodyState extends State<CalendarBody>
 
         const SizedBox(height: 16),
 
-        // ── Leyenda ──────────────────────────────────────────────────────────
+        // ── Leyenda ─────────────────────────────────────────────────────────
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Row(
@@ -257,14 +180,14 @@ class _CalendarBodyState extends State<CalendarBody>
     );
   }
 
-  // ── Vista Mes ─────────────────────────────────────────────────────────────
+  // ── Vista Mes ──────────────────────────────────────────────────────────────
 
   Widget _buildMonthView() {
     final days = _daysInMonth(_focusedMonth);
     final offset = _firstWeekdayOfMonth(_focusedMonth);
     final today = DateTime.now();
-    final isCurrentMonth = _focusedMonth.year == today.year &&
-        _focusedMonth.month == today.month;
+    final isCurrentMonth =
+        _focusedMonth.year == today.year && _focusedMonth.month == today.month;
 
     return Column(
       children: [
@@ -276,8 +199,7 @@ class _CalendarBodyState extends State<CalendarBody>
             children: [
               IconButton(
                 onPressed: () => setState(() {
-                  _focusedMonth = DateTime(
-                      _focusedMonth.year, _focusedMonth.month - 1, 1);
+                  _focusedMonth = DateTime(_focusedMonth.year, _focusedMonth.month - 1, 1);
                 }),
                 icon: const Icon(Icons.chevron_left_rounded),
                 color: AppColors.textPrimary,
@@ -292,8 +214,7 @@ class _CalendarBodyState extends State<CalendarBody>
               ),
               IconButton(
                 onPressed: () => setState(() {
-                  _focusedMonth = DateTime(
-                      _focusedMonth.year, _focusedMonth.month + 1, 1);
+                  _focusedMonth = DateTime(_focusedMonth.year, _focusedMonth.month + 1, 1);
                 }),
                 icon: const Icon(Icons.chevron_right_rounded),
                 color: AppColors.textPrimary,
@@ -302,7 +223,7 @@ class _CalendarBodyState extends State<CalendarBody>
           ),
         ),
 
-        // Encabezados días semana
+        // Encabezados días
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(
@@ -325,7 +246,7 @@ class _CalendarBodyState extends State<CalendarBody>
 
         const SizedBox(height: 8),
 
-        // Grid de días
+        // Grid días
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: GridView.builder(
@@ -389,8 +310,7 @@ class _CalendarBodyState extends State<CalendarBody>
                           height: 4,
                           margin: const EdgeInsets.only(top: 2),
                           decoration: BoxDecoration(
-                            color:
-                                isSelected ? Colors.white70 : dotColor,
+                            color: isSelected ? Colors.white70 : dotColor,
                             shape: BoxShape.circle,
                           ),
                         ),
@@ -404,7 +324,6 @@ class _CalendarBodyState extends State<CalendarBody>
 
         const SizedBox(height: 16),
 
-        // Panel tareas del día seleccionado
         if (_selectedDay != null)
           Expanded(
             child: _DayTasksPanel(
@@ -416,7 +335,7 @@ class _CalendarBodyState extends State<CalendarBody>
     );
   }
 
-  // ── Vista Agenda ──────────────────────────────────────────────────────────
+  // ── Vista Agenda ───────────────────────────────────────────────────────────
 
   Widget _buildAgendaView() {
     final allEntries = _tasksByDay.entries.toList()
@@ -427,8 +346,7 @@ class _CalendarBodyState extends State<CalendarBody>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.event_available_rounded,
-                color: AppColors.grisTexto, size: 48),
+            Icon(Icons.event_available_rounded, color: AppColors.grisTexto, size: 48),
             SizedBox(height: 12),
             Text(
               'Sin tareas programadas',
@@ -496,7 +414,7 @@ class _CalendarBodyState extends State<CalendarBody>
   }
 }
 
-// ── Day Tasks Panel ───────────────────────────────────────────────────────────
+// ── Day Tasks Panel ────────────────────────────────────────────────────────────
 
 class _DayTasksPanel extends StatelessWidget {
   final DateTime day;
@@ -505,10 +423,7 @@ class _DayTasksPanel extends StatelessWidget {
   const _DayTasksPanel({required this.day, required this.tasks});
 
   String _dayLabel(DateTime d) {
-    const meses = [
-      'ene', 'feb', 'mar', 'abr', 'may', 'jun',
-      'jul', 'ago', 'sep', 'oct', 'nov', 'dic'
-    ];
+    const meses = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
     return '${d.day} ${meses[d.month - 1]} ${d.year}';
   }
 
@@ -524,17 +439,12 @@ class _DayTasksPanel extends StatelessWidget {
         ),
         border: Border.all(color: AppColors.lightBlue.withOpacity(0.3)),
         boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 12,
-            offset: const Offset(0, -4),
-          ),
+          BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 12, offset: const Offset(0, -4)),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Handle drag
           Center(
             child: Container(
               width: 36,
@@ -560,8 +470,7 @@ class _DayTasksPanel extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
                     color: AppColors.blueberry.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(20),
@@ -601,7 +510,7 @@ class _DayTasksPanel extends StatelessWidget {
   }
 }
 
-// ── Day Task Tile ─────────────────────────────────────────────────────────────
+// ── Day Task Tile ──────────────────────────────────────────────────────────────
 
 class _DayTaskTile extends StatelessWidget {
   final Map<String, dynamic> task;
@@ -619,9 +528,7 @@ class _DayTaskTile extends StatelessWidget {
         color: done ? color.withOpacity(0.05) : AppColors.background,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: done
-              ? color.withOpacity(0.2)
-              : AppColors.lightBlue.withOpacity(0.3),
+          color: done ? color.withOpacity(0.2) : AppColors.lightBlue.withOpacity(0.3),
         ),
       ),
       child: Row(
@@ -652,30 +559,23 @@ class _DayTaskTile extends StatelessWidget {
                 const SizedBox(height: 2),
                 Row(
                   children: [
-                    const Icon(Icons.schedule,
-                        size: 11, color: AppColors.grisTexto),
+                    const Icon(Icons.schedule, size: 11, color: AppColors.grisTexto),
                     const SizedBox(width: 3),
                     Text(
                       task['time'] as String,
-                      style: const TextStyle(
-                          color: AppColors.grisTexto, fontSize: 11),
+                      style: const TextStyle(color: AppColors.grisTexto, fontSize: 11),
                     ),
                     if (task['foints'] == true) ...[
                       const SizedBox(width: 8),
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 2),
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
                           color: AppColors.blueberry.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: const Text(
                           '⚡ Foints',
-                          style: TextStyle(
-                            color: AppColors.blueberry,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600,
-                          ),
+                          style: TextStyle(color: AppColors.blueberry, fontSize: 10, fontWeight: FontWeight.w600),
                         ),
                       ),
                     ],
@@ -685,9 +585,7 @@ class _DayTaskTile extends StatelessWidget {
             ),
           ),
           Icon(
-            done
-                ? Icons.check_circle_rounded
-                : Icons.radio_button_unchecked_rounded,
+            done ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded,
             color: done ? color : AppColors.grisTexto.withOpacity(0.4),
             size: 22,
           ),
@@ -697,7 +595,7 @@ class _DayTaskTile extends StatelessWidget {
   }
 }
 
-// ── Agenda Task Tile ──────────────────────────────────────────────────────────
+// ── Agenda Task Tile ───────────────────────────────────────────────────────────
 
 class _AgendaTaskTile extends StatelessWidget {
   final Map<String, dynamic> task;
@@ -721,10 +619,7 @@ class _AgendaTaskTile extends StatelessWidget {
           Container(
             width: 6,
             height: 34,
-            decoration: BoxDecoration(
-              color: color,
-              borderRadius: BorderRadius.circular(3),
-            ),
+            decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(3)),
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -742,16 +637,14 @@ class _AgendaTaskTile extends StatelessWidget {
                 ),
                 Text(
                   task['time'] as String,
-                  style: const TextStyle(
-                      color: AppColors.grisTexto, fontSize: 11),
+                  style: const TextStyle(color: AppColors.grisTexto, fontSize: 11),
                 ),
               ],
             ),
           ),
           if (task['foints'] == true)
             Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
                 color: AppColors.blueberry.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(6),
@@ -764,7 +657,7 @@ class _AgendaTaskTile extends StatelessWidget {
   }
 }
 
-// ── Legend Dot ────────────────────────────────────────────────────────────────
+// ── Legend Dot ─────────────────────────────────────────────────────────────────
 
 class _LegendDot extends StatelessWidget {
   final Color color;
@@ -781,9 +674,7 @@ class _LegendDot extends StatelessWidget {
           decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
         const SizedBox(width: 4),
-        Text(label,
-            style:
-                const TextStyle(color: AppColors.grisTexto, fontSize: 11)),
+        Text(label, style: const TextStyle(color: AppColors.grisTexto, fontSize: 11)),
       ],
     );
   }
